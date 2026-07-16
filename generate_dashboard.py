@@ -191,6 +191,7 @@ def publish() -> None:
     token = os.environ.get('GITHUB_TOKEN')
     if token:
         subprocess.run(['gh', 'auth', 'login', '--with-token'], input=token, text=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False)
+        subprocess.run(['gh', 'auth', 'setup-git'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False)
     run(['git', 'init', '-b', 'main'], check=False)
     run(['git', 'config', 'user.email', 'parth@valcat.co'])
     run(['git', 'config', 'user.name', 'Parth / Hermes'])
