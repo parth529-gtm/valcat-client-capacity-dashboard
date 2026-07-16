@@ -193,9 +193,9 @@ def publish() -> None:
         run(['git', 'commit', '-m', 'Update Valcat client capacity dashboard'])
     run(['git', 'push', '-u', 'origin', 'main'])
     if run(['gh', 'api', f'repos/{full}/pages'], check=False).returncode != 0:
-        run(['gh', 'api', '--method', 'POST', f'repos/{full}/pages', '-f', 'source.branch=main', '-f', 'source.path=/'])
+        run(['gh', 'api', '--method', 'POST', f'repos/{full}/pages', '-F', 'source[branch]=main', '-F', 'source[path]=/'])
     else:
-        run(['gh', 'api', '--method', 'PUT', f'repos/{full}/pages', '-f', 'source.branch=main', '-f', 'source.path=/'], check=False)
+        run(['gh', 'api', '--method', 'PUT', f'repos/{full}/pages', '-F', 'source[branch]=main', '-F', 'source[path]=/'], check=False)
     url = run(['gh', 'api', f'repos/{full}/pages', '--jq', '.html_url']).stdout.strip()
     print(json.dumps({'repo': f'https://github.com/{full}', 'pages': url}, indent=2))
 
