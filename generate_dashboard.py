@@ -102,7 +102,14 @@ def channel_for(text: str, client: str) -> str:
     has_inst = 'instantly' in c or 'email' in c
     has_sr = 'salesrobot' in c or 'linkedin' in c
     if has_inst and has_sr:
-        if 'salesrobot is out of scope' in c or 'salesrobot still has 0 active' in c or 'salesrobot has 0 active' in c:
+        if (
+            'salesrobot is out of scope' in c
+            or 'salesrobot still has 0 active' in c
+            or 'salesrobot has 0 active' in c
+            or 'salesrobot is not configured' in c
+            or 'salesrobot is not achievee-configured' in c
+            or 'salesrobot is not configured for' in c
+        ):
             return 'Instantly/email; SalesRobot inactive or out of scope'
         return 'Instantly + SalesRobot'
     if has_inst:
@@ -124,6 +131,13 @@ def client_record(name: str, owner: str, path: Path) -> dict:
     capacity = first_matching(parts, [r'capacity|daily[_ -]?limit|/day|caps?'])
     utilization = first_matching(parts, [r'utili[sz]ation|sent on|sends? on|demand|%'])
     runway = first_matching(parts, [r'runway|not[- ]contacted|\bNC\b|lead gap|\bgap\b|dry|0\.0d'])
+
+    if name == 'Teqtivity':
+        capacity = 'TBD — onboarding; no outbound campaign capacity has been set yet.'
+        utilization = 'No campaign execution yet.'
+        runway = 'Not applicable until Hiren provides data/access and campaigns are built.'
+    elif utilization == 'Not found in current state.' and re.search(r'under-buffer|dry|0\.\d+d|not-contacted|gap', cur, re.I):
+        utilization = 'No separate utilization number in latest state; latest status says active capacity is under-buffered / campaigns are dry.'
 
     rec = {
         'client': name,
